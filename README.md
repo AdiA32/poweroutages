@@ -2,14 +2,23 @@
 By Aditya Agrawal 
 
 ## Introduction:
-Welcome to my exploratory data analysis project, where we dive into the world of power outages in the continental U.S. between January 2000 and July 2016. My main aim is to answer the question: 
+Welcome to my exploratory data analysis project, where we dive into the world of power outages in the continental U.S. between January 2000 and July 2016. My main aim is to answer the question:
+ 
 > When do major power outages tend to occur? 
+
 By understanding the spatial and temporal distribution of these outages, we can hope to shed light on the factors that might contribute to power disruptions, and inform strategies for improving the resilience of the power grid. By default, there are *1534 rows and 55 columns in this dataframe*. As you will see below we will clean, organize and analyze this data. There are many columns available to us but we will not use all of them. Here are the relevant ones and their meanings:
-# TODO: 
-`OUTAGE.START.DATE`,
-`OUTAGE.START.TIME`,
-`OUTAGE.RESTORATION.DATE`,
-`OUTAGE.RESTORATION.TIME`, 
+
+| Variable names          | Description                                                                                            |
+|-------------------------|--------------------------------------------------------------------------------------------------------|
+| **GENERAL INFORMATION** |
+| `OUTAGE.START.DATE`       | Indicates the day of the year when the outage event started                                            |
+| `OUTAGE.START.TIME`       | Indicates the time of the day when the outage event started                                            |
+| `OUTAGE.RESTORATION.DATE` | Indicates the day of the year when power was restored to all the customers                             |
+| `OUTAGE.RESTORATION.TIME` | Indicates the time of the day when power was restored to all the customers                             |
+| `YEAR`                    | Indicates the year when the outage event occurred                                                      |
+| `MONTH`                   | Indicates the month when the outage event occurred                                                     |
+| `OUTAGE.DURATION`         | Duration of outage events (in minutes)                                                                 |
+| `DEMAND.LOSS.MW`          | Amount of peak demand lost during an outage event (in Megawatt) [but in many cases, total demand is reported] |
 
 
 ---
@@ -160,25 +169,42 @@ To verify or disprove this NMAR assumption, i might want to investigate further 
 ### Missingness Dependency
 Based on the dataset, I chose the first looked at the Non-Null Count of my dataset and found the `DEMAND.LOSS.MW` with only *829 non-null* as a good column to analyze for missingness dependency. In my analysis of the missingness in the `DEMAND.LOSS.MW` column of our dataset, I conducted permutation tests with the `OUTAGE.DURATION` and `YEAR` columns. 
 
-My results showed me that the missingness in DEMAND.LOSS.MW was not dependent on OUTAGE.DURATION. The p-value from our permutation test was approximately 0.329, indicating that there is insufficient evidence to reject the null hypothesis. This suggests that the duration of outages does not play a significant role in the recording of demand loss in megawatts.
+My results showed me that the missingness in `DEMAND.LOSS.MW` was not dependent on `OUTAGE.DURATION`. The p-value from our permutation test was approximately 0.329, indicating that there is insufficient evidence to reject the null hypothesis. This suggests that the duration of outages does not play a significant role in the recording of demand loss in megawatts.
 
-However, when I analyzed the dependency of the missingness in DEMAND.LOSS.MW on YEAR, we found significant results. The p-value was 0, indicating strong evidence against the null hypothesis. This suggests that the year of the outage does affect the recording of demand loss in megawatts.
+However, when I analyzed the dependency of the missingness in `DEMAND.LOSS.MW` on `YEAR`, we found significant results. The p-value was 0, indicating strong evidence against the null hypothesis. This suggests that the year of the outage does affect the recording of demand loss in megawatts.
 
 These findings have important implications for our understanding of the data. It indicates that the recording of demand loss is not random, but is instead influenced by certain variables.
 
-In the figure below, I present the empirical distribution of the test statistic from our permutation test, along with the observed statistic. This visualization further illustrates the dependency of the missingness in DEMAND.LOSS.MW on YEAR.
+In the figure below, I present the empirical distribution of the test statistic from our permutation test, along with the observed statistic. This visualization further illustrates the dependency of the missingness in `DEMAND.LOSS.MW` on `YEAR`.
 <iframe src="assets/missing1.html" width=800 height=600 frameBorder=0></iframe>
 <iframe src="assets/missing2.html" width=800 height=600 frameBorder=0></iframe>
 
 ---
 
 ## Hypothesis Testing
-As per your main question - "where and when do major power outages tend to occur?", we can formulate a hypothesis related to the time of the occurrence of power outages.
+As per the main question - "when do major power outages tend to occur?", we can formulate a hypothesis related to the time of the occurrence of power outages.
 
 Let's consider the hypothesis that power outages are more frequent in winter months (December, January, February) than in summer months (June, July, August).
 
-H0 (Null Hypothesis): The number of power outages in winter is the same as in summer.
-H1 (Alternative Hypothesis): The number of power outages in winter is higher than in summer.
+Null Hypothesis (H0): Major power outages are equally likely to occur in winter months (December, January, February), summer months (June, July, August), and other months.
 
-We will use a permutation test to validate our hypothesis, and we'll set our significance level at 0.05.
+Alternative Hypothesis (H1): Major power outages are more likely to occur during winter and summer months compared to other months.
 
+Test Statistic: The difference between the number of outages during winter and summer months and the number of outages during other months.
+
+Significance Level: We will use a significance level of 0.05. If the p-value is less than 0.05, we reject the null hypothesis.
+
+Justification: the difference in the number of outages across different months - was a good choice as it directly measures the effect we were investigating. And the significance level of 0.05 is a common choice in statistical analysis that balances the risk of false positives and negatives.
+
+
+Here are the results: 
+<iframe src="assets/hyptesting.html" width=800 height=600 frameBorder=0></iframe>
+
+**Conclusion**
+The p-value of our test is 0.0, which is less than our significance level of 0.05. This indicates that the difference in the number of power outages occurring in winter and summer months compared to other months is statistically significant. Therefore, we reject the null hypothesis.
+
+The null hypothesis was that major power outages are equally likely to occur in winter months (December, January, February), summer months (June, July, August), and other months. Our test result contradicts this.
+
+Instead, our findings support the alternative hypothesis that major power outages are more likely to occur during winter and summer months compared to other months.
+
+This means that major power outages in the U.S., as per the provided dataset from January 2000 to July 2016, tend to be more frequent in winter and summer months. However, it's important to remember that while our test indicates a significant difference, this doesn't prove causation - there might be other factors influencing this trend.
