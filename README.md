@@ -1,5 +1,5 @@
 # Power Outages: Seasonal or Not? 
-By Aditya Agrawal 
+By Aditya Agrawal
 
 ## Introduction:
 Welcome to my exploratory data analysis project, where we dive into the world of power outages in the continental U.S. between January 2000 and July 2016. My main aim is to answer the question:
